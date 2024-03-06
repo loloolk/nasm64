@@ -1,0 +1,1 @@
+nasm main.asm -o main.o -f win64; nasm io.asm -o io.o -f win64; nasm global.asm -o global.o -f win64; ld main.o io.o global.o -o main.exe
