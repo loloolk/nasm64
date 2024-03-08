@@ -57,45 +57,49 @@ global _println
 
         ret
 
-global _input
+global _input_char
 ; rax = address to store input
-    _input:
-        push rbp
-        mov rbp, rsp
-        sub rsp, $16
-
-        mov qword [rbp], 0 ; offset
-        mov [rbp - $8], rax ; address to store input
-
+    _input_char:
+        push rax
         push rdi
         push rsi
         push rdx
 
+        mov rsi, rax
+
+        mov rax, 0
+        mov rdi, 0
+        mov rdx, 1
+        syscall
+
+        pop rdx
+        pop rsi
+        pop rdi
+        pop rax
+        ret
+
+
+global _input
+; rax = address to store input
+    _input:
+        push rax
+        push rdi
+        push rsi
+        push rdx
+
+        sub rax, 1
+
         loop1:
-            ; read 1 byte from stdin
-            mov rax, 0
-            mov rdi, 0
-            mov rsi, input_buffer
-            mov rdx, 1
-            syscall
-
-            mov rax, [rbp] ; number to offset
-            mov rdi, [rbp - $8] ; address to store input
-            mov dl, [input_buffer] ; input
-            mov byte [rdi + rax], dl ; store input
-
-            add qword [rbp], 1
+            add rax, 1
+            call _input_char
 
             ; check if it's a newline
-            cmp byte [input_buffer], 0x0A
+            cmp byte [rax], 0x0A
             jne loop1
 
         pop rdx
-        pop rcx
-        pop rbx
+        pop rsi
+        pop rdi
+        pop rax
 
-        mov rax, [rbp - $8] ; address to store input
-
-        add rsp, $16
-        pop rbp
         ret
