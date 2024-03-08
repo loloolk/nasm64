@@ -1,6 +1,5 @@
 section .data
     alphabet: db "", 0x09, "", 0x0A, "", 0x0C, 0x0D, "  !", 0x22, "#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~", 0x7f
-    input_buffer: db 0xff
 
 section .text
 global _print

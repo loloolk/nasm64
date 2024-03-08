@@ -29,26 +29,22 @@ global _start
         mov rdi, 10
         call _malloc
 
-        mov rsi, hello
-        mov rdx, len
-        call _println
-
         call _input
         mov rsi, rax
         mov rdx, 10
         call _println
 
-        call _input
-        mov rsi, rax
-        mov rdx, 10
-        call _println
+        ;call _input
+        ;mov rsi, rax
+        ;mov rdx, 10
+        ;call _println
 
-        mov rax, goodbye
-        call _input
+        ;mov rax, goodbye
+        ;call _input
 
-        mov rsi, goodbye
-        mov rdx, len2
-        call _println
+        ;mov rsi, goodbye
+        ;mov rdx, len2
+        ;call _println
             
         call _exit
 
