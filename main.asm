@@ -30,21 +30,26 @@ global _start
         call _malloc
 
         call _input
+
         mov rsi, rax
         mov rdx, 10
         call _println
 
-        ;call _input
-        ;mov rsi, rax
-        ;mov rdx, 10
-        ;call _println
+        mov rdi, 10
+        call _malloc
 
-        ;mov rax, goodbye
-        ;call _input
+        call _input
 
-        ;mov rsi, goodbye
-        ;mov rdx, len2
-        ;call _println
+        mov rsi, rax
+        mov rdx, 10
+        call _println
+
+        mov rdi, -10
+        call _malloc
+
+        mov rsi, rax
+        mov rdx, 10
+        call _println
             
         call _exit
 

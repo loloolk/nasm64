@@ -9,16 +9,11 @@ global _init_malloc
         push rax
         push rdi
 
-        push rbp
-        mov rbp, rsp
-
         mov rax, 12
         mov rdi, 0
         syscall
 
         mov [_brk_start], rax
-
-        pop rbp
 
         pop rdi
         pop rax
