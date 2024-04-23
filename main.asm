@@ -15,6 +15,8 @@ section .text
     extern _newline
     extern _println
     extern _printchar
+    extern _print_nibble
+    extern _print_reg
 
     extern _input
 
@@ -28,6 +30,11 @@ global _start
 
         mov rdi, 10
         call _malloc
+
+        push rax
+        call _print_reg
+        call _newline
+        pop rax
 
         call _input
 

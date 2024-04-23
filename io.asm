@@ -7,6 +7,7 @@ global _print
     ;rdx = length
     _print:
         push rax
+        push rcx
         push rdi
 
         mov rax, 1
@@ -14,8 +15,9 @@ global _print
         syscall
 
         pop rdi
+        pop rcx
         pop rax
-        ret
+    ret
 
 
 global _newline
@@ -26,7 +28,7 @@ global _newline
         call _printchar
 
         pop rax
-        ret
+    ret
 
 
 global _printchar
@@ -43,7 +45,7 @@ global _printchar
 
         pop rsi
         pop rdx
-        ret
+    ret
 
 
 global _println
@@ -54,10 +56,11 @@ global _println
 
         call _newline
 
-        ret
+    ret
+
 
 global _input_char
-; rax = address to store input
+    ; rax = address to store input
     _input_char:
         push rax
         push rdi
@@ -75,11 +78,11 @@ global _input_char
         pop rsi
         pop rdi
         pop rax
-        ret
+    ret
 
 
 global _input
-; rax = address to store input
+    ; rax = address to store input
     _input:
         push rax
         push rdi
@@ -88,17 +91,74 @@ global _input
 
         sub rax, 1
 
-        loop1:
+        .loop:
             add rax, 1
             call _input_char
 
             ; check if it's a newline
             cmp byte [rax], 0x0A
-            jne loop1
+            jne .loop
 
         pop rdx
         pop rsi
         pop rdi
         pop rax
 
-        ret
+    ret
+
+global _print_nibble
+    ; rax = nibble
+    _print_nibble:
+        push rax
+
+        and rax, 0x0F
+        
+        cmp rax, 0x09
+        jbe .print_alpha
+        jmp .print_int
+
+        .print_alpha:
+            add rax, 0x30
+            call _printchar
+            jmp .end
+        
+        .print_int:
+            add rax, 0x37
+            call _printchar
+            jmp .end
+
+        .end:
+
+        pop rax
+    ret
+
+global _print_reg
+    ; rax = register
+    _print_reg:
+        push rax
+        push rbx
+
+        mov rbx, rax
+        mov rax, '0'
+        call _printchar
+        mov rax, 'x'
+        call _printchar
+        mov rax, rbx
+
+        mov rbx, 0
+
+        .loop1:
+            cmp rbx, 16
+            je .end
+
+            rol rax, 4
+            call _print_nibble
+
+            add rbx, 1
+            jmp .loop1
+
+        .end:
+
+        pop rbx
+        pop rax
+    ret

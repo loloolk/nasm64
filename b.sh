@@ -1,0 +1,1 @@
+nasm stdmem.asm -o stdmem.o -f win64; nasm io.asm -o io.o -f win64; ld stdmem.o io.o -o main.exe
