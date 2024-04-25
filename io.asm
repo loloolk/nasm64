@@ -66,6 +66,7 @@ global _input_char
         push rdi
         push rsi
         push rdx
+        push rcx
 
         mov rsi, rax
 
@@ -74,6 +75,7 @@ global _input_char
         mov rdx, 1
         syscall
 
+        pop rcx
         pop rdx
         pop rsi
         pop rdi
@@ -85,9 +87,6 @@ global _input
     ; rax = address to store input
     _input:
         push rax
-        push rdi
-        push rsi
-        push rdx
 
         sub rax, 1
 
@@ -99,9 +98,6 @@ global _input
             cmp byte [rax], 0x0A
             jne .loop
 
-        pop rdx
-        pop rsi
-        pop rdi
         pop rax
 
     ret

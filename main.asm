@@ -6,10 +6,10 @@ section .data
     len2: equ $ - goodbye
 
 section .text
-    extern _brk_start
-    extern _init_malloc
-    extern _malloc
-    extern _exit
+    extern _init_alloc
+    extern _alloc
+    extern _dealloc
+    extern _mem_status
 
     extern _print
     extern _newline
@@ -19,44 +19,48 @@ section .text
     extern _print_reg
 
     extern _input
+    
+    extern _exit
 
 global _start
     _start:
-        call _init_malloc
+        call _init_alloc
 
         mov rsi, hello
         mov rdx, len
         call _println
 
-        mov rdi, 10
-        call _malloc
-
-        push rax
-        call _print_reg
-        call _newline
-        pop rax
+        mov rax, 10
+        call _alloc
+        mov rbx, rax
 
         call _input
 
-        mov rsi, rax
+        mov rsi, rbx
         mov rdx, 10
         call _println
 
-        mov rdi, 10
-        call _malloc
+        mov rax, 10
+        call _alloc
+        mov rcx, rax
 
         call _input
 
-        mov rsi, rax
+        mov rsi, rcx
         mov rdx, 10
         call _println
 
-        mov rdi, -10
-        call _malloc
-
-        mov rsi, rax
+        mov rsi, rbx
         mov rdx, 10
         call _println
+
+        mov rax, rbx
+        call _dealloc
+
+        mov rax, rcx
+        call _dealloc
+
+        call _mem_status
             
         call _exit
 

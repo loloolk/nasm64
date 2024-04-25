@@ -5,8 +5,6 @@ section .data
     _std_mem_pointers: dw 512 dup(0)
     _std_mem_sizes: dw 512 dup(0)
     _std_mem_last_pointer: dw 0
-    hello: db "Hello, World!", 0x0
-    len: equ $ - hello
 
 section .text
     extern _print
@@ -16,7 +14,7 @@ section .text
     extern _print_reg
 
     ; ax, index of pointer
-    _handle_last_pointer: ; go over sizes
+    _handle_last_pointer:
         push rax
         push rbx
         push rcx
@@ -27,7 +25,7 @@ section .text
         shl rbx, 1 ; rbx = last_pointer * 2 (since its a word)
         shl rax, 1 ; rax = index * 2 (since its a word)\
 
-        cmp ax, bx
+        cmp rax, rbx
         je .if1
         
         lea rcx, [_std_mem_pointers + rax] ; rcx = &pointers[index]
@@ -135,6 +133,7 @@ global _alloc
         mov rax, 0
         mov ax, [rsp] ; rax = loc
         add rax, [_std_mem_brk_start] ; rax = &MEMORY[loc]
+        add rax, 2 ; rax = &MEMORY[loc + 2]
         
         add rsp, 16
         pop rbp
@@ -158,6 +157,9 @@ global _dealloc
         sub rsp, 32
         ; 2 bytes to store the address of the final location [new_loc]
         ; 2 bytes to store the size of the memory block [size]
+
+        sub rax, 2
+
         mov rdx, 0
         mov dx, [rax] ; bx = size
         add dx, 2 ; bx = size + 2
@@ -306,8 +308,8 @@ global _dealloc
         pop rax
     ret      
 
-global _init_malloc
-    _init_malloc:
+global _init_alloc
+    _init_alloc:
         push rax
         push rdi
 
@@ -356,36 +358,40 @@ global _mem_status
         pop rax
     ret
 
-global _start
-    _start:
-        call _init_malloc
-        mov rax, [_std_mem_brk_start]
-        ;call _print_reg
-        call _newline
+; global _start
+;     _start:
+;         call _init_malloc
 
-        mov rax, 0x60
-        call _alloc
-        mov rbx, rax
+;         mov rax, 0x60
+;         call _alloc
+;         mov rbx, rax
 
-        mov rax, 0x60
-        call _alloc
-        mov rcx, rax
+;         mov rax, 0x60
+;         call _alloc
+;         mov rcx, rax
 
-        mov rax, 0x60
-        call _alloc
-        mov rdx, rax
+;         mov rax, 0x60
+;         call _alloc
+;         mov rdx, rax
+        
+;         mov rax, 0x60
+;         call _alloc
+;         mov rsi, rax
 
-        mov rax, rbx
-        call _dealloc
+;         mov rax, rbx
+;         call _dealloc
 
-        mov rax, rcx
-        call _dealloc
+;         mov rax, rdx
+;         call _dealloc
 
-        mov rax, 0xC2
-        call _alloc
+;         mov rax, rcx
+;         call _dealloc
 
-        call _mem_status
+;         mov rax, rsi
+;         call _dealloc
 
-        mov rax, 60
-        mov rdi, 0
-        syscall
+;         call _mem_status
+
+;         mov rax, 60
+;         mov rdi, 0
+;         syscall
