@@ -67,7 +67,7 @@ section .text
         pop rax
     ret
 
-    global _alloc
+global _alloc
     ; size in ax
     ; returns address in rax
     _alloc:
@@ -98,9 +98,12 @@ section .text
                 mov [rsp], cx ; loc = pointers[i]
 
                 add rcx, [_std_mem_brk_start] ; rcx = &MEMORY[pointers[i]]
+                sub ax, 2 ; size -= 2
                 mov [rcx], ax ; MEMORY[pointers[i]] = size
+                add ax, 2 ; size += 2
 
                 cmp word [_std_mem_sizes + rbx * 2], ax ; if sizes[i] == size + 2
+
                 je .if2
 
                 ; else
@@ -142,7 +145,7 @@ section .text
     ret
 
 
-    global _dealloc
+global _dealloc
     ; address in rax, although only the first 16 bits are used
     _dealloc: ; do I need to sub by brk?
         push rax ; address
@@ -163,6 +166,7 @@ section .text
         sub rax, [_std_mem_brk_start] ; rax = address - brk
 
         lea dx, [rax + rdx] ; rbx = address + size + 2
+
         cmp dx, [_std_mem_pointers] ; if address + size + 2 == pointers[0]
         mov [rsp], dx ; new_loc = address + size + 2
 
@@ -321,6 +325,36 @@ global _init_malloc
         pop rax
     ret
 
+global _mem_status
+    _mem_status:
+        push rax
+        mov rax, 0xFFFFFFFFFFFFFFFF
+        call _print_reg
+        call _newline
+
+        mov rax, 0
+
+        mov ax, [_std_mem_last_pointer]
+        call _print_reg
+        call _newline
+
+        mov ax, [_std_mem_pointers]
+        call _print_reg
+        call _newline
+
+        mov ax, [_std_mem_pointers + 2]
+        call _print_reg
+        call _newline
+
+        mov ax, [_std_mem_sizes]
+        call _print_reg
+        call _newline
+
+        mov ax, [_std_mem_sizes + 2]
+        call _print_reg
+        call _newline
+        pop rax
+    ret
 
 global _start
     _start:
@@ -347,37 +381,10 @@ global _start
         mov rax, rcx
         call _dealloc
 
-        mov rax, 0x60
+        mov rax, 0xC2
         call _alloc
 
-        mov rax, rdx
-        call _dealloc
-
-        mov rax, 0x0
-        call _newline
-        call _newline
-        call _newline
-
-        mov ax, [_std_mem_last_pointer]
-        call _print_reg
-        call _newline
-
-        mov ax, [_std_mem_pointers]
-        call _print_reg
-        call _newline
-
-        mov ax, [_std_mem_pointers + 2]
-        call _print_reg
-        call _newline
-
-        mov ax, [_std_mem_sizes]
-        call _print_reg
-        call _newline
-
-        mov ax, [_std_mem_sizes + 2]
-        call _print_reg
-        call _newline
-
+        call _mem_status
 
         mov rax, 60
         mov rdi, 0
