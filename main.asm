@@ -34,25 +34,12 @@ global _start
         call _alloc
         mov rbx, rax
 
-        call _input
-
-        mov rsi, rbx
-        mov rdx, 10
-        call _println
-
         mov rax, 10
         call _alloc
         mov rcx, rax
 
+        mov rdx, 10
         call _input
-
-        mov rsi, rcx
-        mov rdx, 10
-        call _println
-
-        mov rsi, rbx
-        mov rdx, 10
-        call _println
 
         mov rax, rbx
         call _dealloc
@@ -61,6 +48,8 @@ global _start
         call _dealloc
 
         call _mem_status
+
+        .test:
             
         call _exit
 

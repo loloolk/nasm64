@@ -85,21 +85,32 @@ global _input_char
 
 global _input
     ; rax = address to store input
+    ; rdx = length
     _input:
         push rax
-
+        push rdx
+        
+        add rdx, rax
         sub rax, 1
 
         .loop:
             add rax, 1
             call _input_char
 
+            ; make sure its not going to overflow
+            cmp rax, rdx
+            je .end
+
             ; check if it's a newline
             cmp byte [rax], 0x0A
-            jne .loop
+            je .end
 
+            jmp .loop
+        
+        .end:
+
+        pop rdx
         pop rax
-
     ret
 
 global _print_nibble
